@@ -38,6 +38,7 @@ public class SignActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
                 String userName = userNameEditText.getText().toString();
+                String password_re=password_reEditText.getText().toString();
 
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(userName)) {
                     showToast("Vui lòng nhập đầy đủ thông tin");
@@ -46,6 +47,10 @@ public class SignActivity extends AppCompatActivity {
 
                 if (!isValidPassword(password)) {
                     showToast("Mật khẩu phải chứa ít nhất 6 ký tự và bao gồm cả chữ hoa, chữ thường, số và ký tự đặc biệt");
+                    return;
+                }
+                if (!password.equals(password_re)) {
+                    showToast("Mật khẩu nhập lại không khớp");
                     return;
                 }
 
