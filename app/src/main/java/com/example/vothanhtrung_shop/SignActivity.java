@@ -1,5 +1,6 @@
 package com.example.vothanhtrung_shop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,43 +31,40 @@ public class SignActivity extends AppCompatActivity {
 
         registerButton = findViewById(R.id.register_button);
         apiCaller = ApiCaller.getInstance(this);
-        // kiem tra lổi
-//        Log.d("avav", "okokok");
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Lấy giá trị từ các EditText
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
                 String userName = userNameEditText.getText().toString();
 
-                // Kiểm tra xem các trường đã được điền đầy đủ không
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(userName)) {
-                    showToast("vui lòng nhập trường bắt buộc");
+                    showToast("Vui lòng nhập đầy đủ thông tin");
                     return;
                 }
 
-                // Kiểm tra mật khẩu có đủ độ dài và chứa các yếu tố cần thiết không
                 if (!isValidPassword(password)) {
-                    showToast("mật khẩu của bạn phải bằng hoặc trên 6 ký tự và phải chứa ký tự đặc biệt");
+                    showToast("Mật khẩu phải chứa ít nhất 6 ký tự và bao gồm cả chữ hoa, chữ thường, số và ký tự đặc biệt");
                     return;
                 }
 
-                // Tạo mới đối tượng User với các giá trị từ các EditText
-                User newUser = new User(email, password,"null", userName, "null");
+                User newUser = new User(email, password, "null", userName, "null");
 
-                // Gọi phương thức addUser từ apiCaller để thêm người dùng mới
                 apiCaller.addUser(newUser, new ApiCaller.ApiResponseListener<User>() {
                     @Override
                     public void onSuccess(User response) {
-                        showToast("Đăng ký thành công người dùng");
+                        showToast("Đăng ký thành công");
                         Log.d("avav", "Đăng kí người dùng thành công. Username: " + response.getUsername());
+                        // Chuyển tới MainActivity khi đăng ký thành công
+                        Intent intent = new Intent(SignActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish(); // Đóng Activity hiện tại
                     }
 
                     @Override
                     public void onError(String errorMessage) {
-                        showToast("Đăng kí thất bại " + errorMessage);
+                        showToast("Đăng ký thất bại: " + errorMessage);
                         Log.d("avav", "Đăng kí người dùng không thành công " + errorMessage);
                     }
                 });
@@ -74,7 +72,6 @@ public class SignActivity extends AppCompatActivity {
         });
     }
 
-    // Hàm kiểm tra mật khẩu có đủ độ dài và chứa các yếu tố cần thiết không
     private boolean isValidPassword(String password) {
         String passwordPattern = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=]).{6,}";
         return password.matches(passwordPattern);
