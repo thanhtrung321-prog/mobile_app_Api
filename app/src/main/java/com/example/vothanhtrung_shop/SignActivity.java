@@ -8,16 +8,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import java.util.Objects;
 
 public class SignActivity extends AppCompatActivity {
 
-    public EditText emailEditText;
-    public EditText passwordEditText;
-    public EditText password_reEditText;
-    public EditText userNameEditText;
-    public Button registerButton;
-    public ApiCaller apiCaller;
+    private EditText emailEditText;
+    private EditText passwordEditText;
+    private EditText password_reEditText;
+    private EditText userNameEditText;
+    private Button registerButton;
+    private ApiCaller apiCaller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +30,8 @@ public class SignActivity extends AppCompatActivity {
 
         registerButton = findViewById(R.id.register_button);
         apiCaller = ApiCaller.getInstance(this);
-        Log.d("avav","okokok");
+        // kiem tra lổi
+//        Log.d("avav", "okokok");
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,7 +39,19 @@ public class SignActivity extends AppCompatActivity {
                 // Lấy giá trị từ các EditText
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-                String userName = userNameEditText.getText().toString();// Lấy số điện thoại nếu cần
+                String userName = userNameEditText.getText().toString();
+
+                // Kiểm tra xem các trường đã được điền đầy đủ không
+                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(userName)) {
+                    showToast("vui lòng nhập trường bắt buộc");
+                    return;
+                }
+
+                // Kiểm tra mật khẩu có đủ độ dài và chứa các yếu tố cần thiết không
+                if (!isValidPassword(password)) {
+                    showToast("mật khẩu của bạn phải bằng hoặc trên 6 ký tự và phải chứa ký tự đặc biệt");
+                    return;
+                }
 
                 // Tạo mới đối tượng User với các giá trị từ các EditText
                 User newUser = new User(email, password,"null", userName, "null");
@@ -60,6 +72,12 @@ public class SignActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    // Hàm kiểm tra mật khẩu có đủ độ dài và chứa các yếu tố cần thiết không
+    private boolean isValidPassword(String password) {
+        String passwordPattern = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=]).{6,}";
+        return password.matches(passwordPattern);
     }
 
     private void showToast(String message) {
