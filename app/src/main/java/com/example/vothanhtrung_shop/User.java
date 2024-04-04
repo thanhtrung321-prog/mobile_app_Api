@@ -1,25 +1,58 @@
 package com.example.vothanhtrung_shop;
 
 public class User {
-    private String userName;
     private String email;
-    private int roles; // Đổi kiểu dữ liệu của roles thành int để phản ánh vai trò của người dùng
+    private String numphone;
+    private String pass;
+    private String photo;
+    private String username;
 
-    public User(String userName, String email, int roles) { // Thêm tham số roles vào constructor
-        this.userName = userName;
+    public User(String email, String pass, String photo, String username,String numphone) {
         this.email = email;
-        this.roles = roles;
+        this.numphone = numphone;
+        this.pass = pass;
+        this.photo = photo;
+        this.username = username;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
+    // Getters and setters
     public String getEmail() {
         return email;
     }
 
-    public int getRoles() { // Thêm getter cho trường roles
-        return roles;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNumphone() {
+        return numphone;
+    }
+
+    public void setNumphone(String numphone) {
+        this.numphone = numphone;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
