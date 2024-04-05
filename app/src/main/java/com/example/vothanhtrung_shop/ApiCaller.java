@@ -24,7 +24,7 @@ public class ApiCaller {
     private static ApiCaller instance;
     private static Context ctx;
 
-    public static String url = "http://192.168.1.5:8080/api";
+    public static String url = "http://192.168.1.9:8080/api";
 
     private ApiCaller(Context context) {
         ctx = context.getApplicationContext();  // Sử dụng getApplicationContext() để tránh leak memory
@@ -117,13 +117,13 @@ public class ApiCaller {
                             User savedUser = user;
                             listener.onSuccess(savedUser);
                         } catch (JSONException e) {
-                            listener.onError("Error parsing server response.");
+                            listener.onError("Lỗi kết nối đến sever.");
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onError("Error adding user: " + error.toString());
+                listener.onError("Không thể thêm user:" + error.toString());
             }
         }){
             @Override
