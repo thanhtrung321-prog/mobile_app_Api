@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,6 +32,7 @@ public class SignActivity extends AppCompatActivity {
 
         registerButton = findViewById(R.id.register_button);
         apiCaller = ApiCaller.getInstance(this);
+
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +77,7 @@ public class SignActivity extends AppCompatActivity {
                 });
             }
         });
+
     }
 
     private boolean isValidPassword(String password) {

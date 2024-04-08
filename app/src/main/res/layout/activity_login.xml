@@ -90,7 +90,8 @@
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/yeonsungregular"
         android:text="Hoặc"
         app:layout_constraintEnd_toEndOf="@+id/loginPasswordadmin"
         app:layout_constraintHorizontal_bias="0.52"
@@ -157,4 +158,16 @@
         app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="@+id/login_button_admin"
         app:layout_constraintTop_toBottomOf="@+id/login_button_admin" />
+
+    <CheckBox
+        android:id="@+id/checkboxsave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/yeonsungregular"
+        android:text="Lưu tài khoản"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.164"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginPasswordadmin" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -24,7 +25,7 @@ public class ApiCaller {
     private static ApiCaller instance;
     private static Context ctx;
 
-    public static String url = "http://192.168.1.9:8080/api";
+    public static String url = "http://192.168.1.6:8080/api";
 
     private ApiCaller(Context context) {
         ctx = context.getApplicationContext();  // Sử dụng getApplicationContext() để tránh leak memory
@@ -140,5 +141,4 @@ public class ApiCaller {
 
         addToRequestQueue(request);
     }
-
 }
