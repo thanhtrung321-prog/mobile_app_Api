@@ -25,7 +25,7 @@ public class ApiCaller {
     private static ApiCaller instance;
     private static Context ctx;
 
-    public static String url = "http://192.168.1.8:8080/api";
+    public static String url = "http://192.168.145.130:8080/api";
 
     private ApiCaller(Context context) {
         ctx = context.getApplicationContext();  // Sử dụng getApplicationContext() để tránh leak memory

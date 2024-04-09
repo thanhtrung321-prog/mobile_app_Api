@@ -1,36 +1,40 @@
 package com.example.vothanhtrung_shop.Fragment;
-
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
+import androidx.recyclerview.widget.RecyclerView;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.interfaces.ItemClickListener;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.example.vothanhtrung_shop.ApiCaller;
+import com.example.vothanhtrung_shop.Product;
 import com.example.vothanhtrung_shop.R;
 import com.example.vothanhtrung_shop.adaptar.PopularAddaptar;
-import com.example.vothanhtrung_shop.databinding.FragmentHomeBinding;
-
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
-
-    private FragmentHomeBinding binding;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     private String mParam1;
     private String mParam2;
+    private ApiCaller apiCaller;
+    private JSONObject userObject;
+    private String userName;
+
+    private PopularAddaptar popularAdapter;
+    private List<Product> productList = new ArrayList<>();
 
     public HomeFragment() {
         // Required empty public constructor
@@ -54,75 +58,84 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Setup Image Slider
+        // Initialize ImageSlider
+        ImageSlider imageSlider = view.findViewById(R.id.image_slider);
         ArrayList<SlideModel> imageList = new ArrayList<>();
         imageList.add(new SlideModel(R.drawable.banner1, ScaleTypes.FIT));
         imageList.add(new SlideModel(R.drawable.banner2, ScaleTypes.FIT));
         imageList.add(new SlideModel(R.drawable.banner3, ScaleTypes.FIT));
-
-        ImageSlider imageSlider = binding.imageSlider;
         imageSlider.setImageList(imageList, ScaleTypes.FIT);
         imageSlider.setItemClickListener(new ItemClickListener() {
             @Override
-            public void onItemSelected(int position) {
-                SlideModel selectedItem = imageList.get(position);
-                String itemMessage = "Hình Ảnh Hiện Tại " + position;
-                Toast.makeText(requireContext(), itemMessage, Toast.LENGTH_SHORT).show();
+            public void onItemSelected(int i) {
+                    SlideModel selectedItem = imageList.get(i);
+                    String itemMessage = "Hình Ảnh Hiện Tại " + i;
+                    Toast.makeText(requireContext(), itemMessage, Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void doubleClick(int position) {
-                // TODO: Implement doubleClick action
+            public void doubleClick(int i) {
+
             }
         });
-        // tạo mảng để in ra sản phẩm
-        // Setup RecyclerView
-        List<String> foodNames = new ArrayList<>();
-        foodNames.add("burger");
-        foodNames.add("sandwich");
-        foodNames.add("momo");
-        foodNames.add("item");
-        foodNames.add("item");
-        foodNames.add("item");
-        foodNames.add("item");
 
+        // Initialize RecyclerView for popular products
+        RecyclerView popularRecyclerView = view.findViewById(R.id.PopulerRecyclerView);
+        popularRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        popularAdapter = new PopularAddaptar(productList);
+        popularRecyclerView.setAdapter(popularAdapter);
 
-        List<String> prices = new ArrayList<>();
-        prices.add("$5");
-        prices.add("$7");
-        prices.add("$8");
-        prices.add("$10");
-        prices.add("$18");
-        prices.add("$13");
-        prices.add("$20");
-        List<Integer> populerFoodImages = new ArrayList<>();
-        populerFoodImages.add(R.drawable.menu1);
-        populerFoodImages.add(R.drawable.menu2);
-        populerFoodImages.add(R.drawable.menu3);
-        populerFoodImages.add(R.drawable.menu4);
-        populerFoodImages.add(R.drawable.menu5);
-        populerFoodImages.add(R.drawable.menu6);
-        populerFoodImages.add(R.drawable.menu7);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String userString = bundle.getString("userObject");
+            try {
+                userObject = new JSONObject(userString);
+                userName = userObject.getString("username");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
-        PopularAddaptar adapter = new PopularAddaptar(foodNames, prices, populerFoodImages);
-        binding.PopulerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.PopulerRecyclerView.setAdapter(adapter);
-    }
+        apiCaller = ApiCaller.getInstance(getContext());
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        // Load products
+        apiCaller.makeStringRequest(apiCaller.url + "/products", new ApiCaller.ApiResponseListener<String>() {
+            @Override
+            public void onSuccess(String response) {
+                JSONArray jsonArrayData = apiCaller.stringToJsonArray(response);
+                if (jsonArrayData != null) {
+                    // Xóa danh sách cũ trước khi thêm sản phẩm mới
+                    productList.clear();
+                    try {
+                        for (int i = 0; i < jsonArrayData.length(); i++) {
+                            JSONObject productJson = jsonArrayData.getJSONObject(i);
+                            Product product = new Product();
+                            product.setId(productJson.getInt("id"));
+                            product.setTitle(productJson.getString("title"));
+                            product.setPrice(productJson.getDouble("price"));
+                            product.setPhoto(productJson.getString("photo"));
+                            productList.add(product);
+                        }
+                        popularAdapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.e("Error", "Invalid JSON string");
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e("Error", errorMessage);
+                // Handle error
+            }
+        });
+
+        return view;
     }
 }

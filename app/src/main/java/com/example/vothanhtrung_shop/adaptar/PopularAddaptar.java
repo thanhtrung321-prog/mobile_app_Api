@@ -4,19 +4,19 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.squareup.picasso.Picasso;
+
+import com.bumptech.glide.Glide;
+import com.example.vothanhtrung_shop.Product;
 import com.example.vothanhtrung_shop.databinding.PopulerItemBinding;
 import java.util.List;
 
 public class PopularAddaptar extends RecyclerView.Adapter<PopularAddaptar.PopularViewHolder> {
 
-    private final List<String> items;
-    private final List<String> prices;
-    private final List<Integer> images;
+    private final List<Product> productList;
 
-    public PopularAddaptar(List<String> items, List<String> prices, List<Integer> images) {
-        this.items = items;
-        this.prices = prices;
-        this.images = images;
+    public PopularAddaptar(List<Product> productList) {
+        this.productList = productList;
     }
 
     @NonNull
@@ -28,18 +28,17 @@ public class PopularAddaptar extends RecyclerView.Adapter<PopularAddaptar.Popula
 
     @Override
     public void onBindViewHolder(@NonNull PopularViewHolder holder, int position) {
-        String item = items.get(position);
-        String price = prices.get(position);
-        int image = images.get(position);
-        holder.bind(item, price, image);
+        Product product = productList.get(position);
+        holder.bind(product);
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return productList.size();
     }
 
-    public void setOnItemClickListener(PopularAddaptar.OnItemClickListener test) {
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        // Implement your logic for item click listener here
     }
 
     public interface OnItemClickListener {
@@ -54,10 +53,10 @@ public class PopularAddaptar extends RecyclerView.Adapter<PopularAddaptar.Popula
             this.binding = binding;
         }
 
-        public void bind(String item, String price, int image) {
-            binding.foodNamePopuler.setText(item);
-            binding.PricePopuler.setText(price);
-            binding.imageView5.setImageResource(image);
+        public void bind(Product product) {
+            binding.foodNamePopuler.setText(product.getTitle());
+            binding.PricePopuler.setText(String.valueOf(product.getPrice()));
+            Picasso.get().load(product.getPhoto()).into(binding.imageView5);
         }
     }
 }
