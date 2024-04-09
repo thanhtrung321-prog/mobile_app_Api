@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.vothanhtrung_shop.ApiCaller;
 import com.squareup.picasso.Picasso;
 
 import com.bumptech.glide.Glide;
@@ -11,8 +13,10 @@ import com.example.vothanhtrung_shop.Product;
 import com.example.vothanhtrung_shop.databinding.PopulerItemBinding;
 import java.util.List;
 
+
 public class PopularAddaptar extends RecyclerView.Adapter<PopularAddaptar.PopularViewHolder> {
 
+    static ApiCaller apiCaller;
     private final List<Product> productList;
 
     public PopularAddaptar(List<Product> productList) {
@@ -56,7 +60,12 @@ public class PopularAddaptar extends RecyclerView.Adapter<PopularAddaptar.Popula
         public void bind(Product product) {
             binding.foodNamePopuler.setText(product.getTitle());
             binding.PricePopuler.setText(String.valueOf(product.getPrice()));
-            Picasso.get().load(product.getPhoto()).into(binding.imageView5);
+
+            Picasso.get()
+                    .load(apiCaller.url+"/image/products/"+product.getPhoto())
+//                    .placeholder (R.drawable.downloading_200)
+//                    .error(R.drawable.error_200)
+                    .into (binding.imageView5);
         }
     }
 }
