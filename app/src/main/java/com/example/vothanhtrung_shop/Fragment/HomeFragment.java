@@ -1,13 +1,18 @@
 package com.example.vothanhtrung_shop.Fragment;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.interfaces.ItemClickListener;
@@ -16,9 +21,12 @@ import com.example.vothanhtrung_shop.ApiCaller;
 import com.example.vothanhtrung_shop.Product;
 import com.example.vothanhtrung_shop.R;
 import com.example.vothanhtrung_shop.adaptar.PopularAddaptar;
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,24 +70,47 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Initialize ImageSlider
-        ImageSlider imageSlider = view.findViewById(R.id.image_slider);
-        ArrayList<SlideModel> imageList = new ArrayList<>();
-        imageList.add(new SlideModel(R.drawable.banner1, ScaleTypes.FIT));
-        imageList.add(new SlideModel(R.drawable.banner2, ScaleTypes.FIT));
-        imageList.add(new SlideModel(R.drawable.banner3, ScaleTypes.FIT));
-        imageSlider.setImageList(imageList, ScaleTypes.FIT);
-        imageSlider.setItemClickListener(new ItemClickListener() {
+        // Initialize apiCaller
+        apiCaller = ApiCaller.getInstance(getContext());
+
+        // Load slideShows and set up ImageSlider
+        apiCaller.makeStringRequest(apiCaller.url + "/slideShows", new ApiCaller.ApiResponseListener<String>() {
             @Override
-            public void onItemSelected(int i) {
-                    SlideModel selectedItem = imageList.get(i);
-                    String itemMessage = "Hình Ảnh Hiện Tại " + i;
-                    Toast.makeText(requireContext(), itemMessage, Toast.LENGTH_SHORT).show();
+            public void onSuccess(String response) {
+                JSONArray jsonArrayData = apiCaller.stringToJsonArray(response);
+                if (jsonArrayData != null) {
+                    ArrayList<SlideModel> imageList = new ArrayList<>();
+                    for (int i = 0; i < jsonArrayData.length(); i++) {
+                        try {
+                            JSONObject slideJson = jsonArrayData.getJSONObject(i);
+                            String imageUrl = apiCaller.url + "/image/slideShows/" + slideJson.getString("photo");
+                            imageList.add(new SlideModel(imageUrl, ScaleTypes.FIT));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    ImageSlider imageSlider = view.findViewById(R.id.image_slider);
+                    imageSlider.setImageList(imageList, ScaleTypes.FIT);
+                    imageSlider.setItemClickListener(new ItemClickListener() {
+                        @Override
+                        public void onItemSelected(int i) {
+                            String itemMessage = "Hình Ảnh Hiện Tại " + i;
+                            Toast.makeText(requireContext(), itemMessage, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void doubleClick(int i) {
+                        }
+                    });
+                } else {
+                    Log.e("Error", "Invalid JSON string");
+                }
             }
 
             @Override
-            public void doubleClick(int i) {
-
+            public void onError(String errorMessage) {
+                Log.e("Error", errorMessage);
+                // Handle error
             }
         });
 
@@ -100,15 +131,13 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        apiCaller = ApiCaller.getInstance(getContext());
-
         // Load products
         apiCaller.makeStringRequest(apiCaller.url + "/products", new ApiCaller.ApiResponseListener<String>() {
             @Override
             public void onSuccess(String response) {
                 JSONArray jsonArrayData = apiCaller.stringToJsonArray(response);
                 if (jsonArrayData != null) {
-                    // Xóa danh sách cũ trước khi thêm sản phẩm mới
+                    // Clear the productList before adding new products
                     productList.clear();
                     try {
                         for (int i = 0; i < jsonArrayData.length(); i++) {
