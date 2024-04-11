@@ -8,13 +8,13 @@
 
     <TextView
         android:id="@+id/detaildescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_width="344dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="24dp"
         android:text="Lorem ipsum dolor sit amet, &#xA;consectetur adipiscing elit, &#xA;sed do eiusmod tempor incididunt &#xA;ut labore et dolore magna aliqua. Ut enim ad "
-        app:layout_constraintEnd_toEndOf="@+id/textView36"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/textView36"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView36" />
 
     <TextView
@@ -68,21 +68,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Thành phần"
+        android:text="Giá tiền :"
+        android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.136"
+        app:layout_constraintHorizontal_bias="0.102"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detaildescription" />
-
-    <TextView
-        android:id="@+id/listdetailnoadmin"
-        android:layout_width="320dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/detailcomponent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/detailcomponent"
-        app:layout_constraintTop_toBottomOf="@+id/detailcomponent" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/detail_button"
@@ -97,4 +88,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/detailPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/yeonsungregular"
+        android:text="20$"
+        android:textColor="@color/text_color"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.093"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailcomponent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

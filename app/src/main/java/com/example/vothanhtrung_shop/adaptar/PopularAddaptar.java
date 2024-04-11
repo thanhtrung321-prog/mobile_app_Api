@@ -1,33 +1,36 @@
 package com.example.vothanhtrung_shop.adaptar;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.vothanhtrung_shop.ApiCaller;
-import com.squareup.picasso.Picasso;
-
-import com.bumptech.glide.Glide;
+import com.example.vothanhtrung_shop.DetailNoAdmin;
 import com.example.vothanhtrung_shop.Product;
-import com.example.vothanhtrung_shop.databinding.PopulerItemBinding;
+import com.example.vothanhtrung_shop.R;
+import com.squareup.picasso.Picasso;
 import java.util.List;
-
 
 public class PopularAddaptar extends RecyclerView.Adapter<PopularAddaptar.PopularViewHolder> {
 
-    static ApiCaller apiCaller;
+    private final Context context;
     private final List<Product> productList;
 
-    public PopularAddaptar(List<Product> productList) {
+    public PopularAddaptar(Context context, List<Product> productList) {
+        this.context = context;
         this.productList = productList;
     }
 
     @NonNull
     @Override
     public PopularViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        PopulerItemBinding binding = PopulerItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        return new PopularViewHolder(binding);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.populer_item, parent, false);
+        return new PopularViewHolder(view);
     }
 
     @Override
@@ -41,31 +44,37 @@ public class PopularAddaptar extends RecyclerView.Adapter<PopularAddaptar.Popula
         return productList.size();
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        // Implement your logic for item click listener here
-    }
+    public class PopularViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final TextView productNameTextView;
+        private final ImageView productImageView;
 
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
-
-    public static class PopularViewHolder extends RecyclerView.ViewHolder {
-        private final PopulerItemBinding binding;
-
-        public PopularViewHolder(@NonNull PopulerItemBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+        public PopularViewHolder(@NonNull View itemView) {
+            super(itemView);
+            productNameTextView = itemView.findViewById(R.id.foodNamePopuler);
+            productImageView = itemView.findViewById(R.id.imageView5);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Product product) {
-            binding.foodNamePopuler.setText(product.getTitle());
-            binding.PricePopuler.setText(String.valueOf(product.getPrice()));
-
+            productNameTextView.setText(product.getTitle());
             Picasso.get()
-                    .load(apiCaller.url+"/image/products/"+product.getPhoto())
-//                    .placeholder (R.drawable.downloading_200)
-//                    .error(R.drawable.error_200)
-                    .into (binding.imageView5);
+                    .load(ApiCaller.url + "/image/products/" + product.getPhoto())
+                    .into(productImageView);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                Product product = productList.get(position);
+                // Chuyển sang DetailNoAdmin khi nhấn vào sản phẩm
+                Intent intent = new Intent(context, DetailNoAdmin.class);
+                intent.putExtra("productName", product.getTitle());
+                intent.putExtra("productImageURL", product.getPhoto());
+                intent.putExtra("productDescription", product.getDescription());
+                intent.putExtra("pricedetail",product.getPrice());
+                context.startActivity(intent);
+            }
         }
     }
 }

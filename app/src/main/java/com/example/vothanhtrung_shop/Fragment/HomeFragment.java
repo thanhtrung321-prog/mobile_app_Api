@@ -1,13 +1,12 @@
 package com.example.vothanhtrung_shop.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,7 +19,9 @@ import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.vothanhtrung_shop.ApiCaller;
 import com.example.vothanhtrung_shop.Product;
 import com.example.vothanhtrung_shop.R;
+
 import com.example.vothanhtrung_shop.adaptar.PopularAddaptar;
+import com.example.vothanhtrung_shop.databinding.FragmentHomeBinding;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -43,6 +44,8 @@ public class HomeFragment extends Fragment {
 
     private PopularAddaptar popularAdapter;
     private List<Product> productList = new ArrayList<>();
+
+    private FragmentHomeBinding binding;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -68,7 +71,9 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        // Inflate the layout for this fragment
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         // Initialize apiCaller
         apiCaller = ApiCaller.getInstance(getContext());
@@ -89,7 +94,7 @@ public class HomeFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                    ImageSlider imageSlider = view.findViewById(R.id.image_slider);
+                    ImageSlider imageSlider = binding.imageSlider;
                     imageSlider.setImageList(imageList, ScaleTypes.FIT);
                     imageSlider.setItemClickListener(new ItemClickListener() {
                         @Override
@@ -115,9 +120,10 @@ public class HomeFragment extends Fragment {
         });
 
         // Initialize RecyclerView for popular products
-        RecyclerView popularRecyclerView = view.findViewById(R.id.PopulerRecyclerView);
+        RecyclerView popularRecyclerView = binding.PopulerRecyclerView;
         popularRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        popularAdapter = new PopularAddaptar(productList);
+        Context context = requireContext();
+        popularAdapter = new PopularAddaptar(context, productList);
         popularRecyclerView.setAdapter(popularAdapter);
 
         Bundle bundle = getArguments();
@@ -147,6 +153,8 @@ public class HomeFragment extends Fragment {
                             product.setTitle(productJson.getString("title"));
                             product.setPrice(productJson.getDouble("price"));
                             product.setPhoto(productJson.getString("photo"));
+                            product.setDescription(productJson.getString("description"));
+                            product.setPrice(productJson.getDouble("price"));
                             productList.add(product);
                         }
                         popularAdapter.notifyDataSetChanged();
@@ -166,5 +174,11 @@ public class HomeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

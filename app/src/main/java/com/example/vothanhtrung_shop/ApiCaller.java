@@ -141,4 +141,35 @@ public class ApiCaller {
 
         addToRequestQueue(request);
     }
+    public void addCartDetail(int cartId, int productId, int quantity, ApiResponseListener<JSONObject> listener) {
+        // Tạo JSON object để đại diện cho dữ liệu cần gửi đi
+        JSONObject requestData = new JSONObject();
+        try {
+            requestData.put("cart_id", cartId);
+            requestData.put("product_id", productId);
+            requestData.put("quantity", quantity);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void addCart(ApiResponseListener<JSONObject> listener) {
+        // Tạo yêu cầu POST mới để thêm giỏ hàng
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,  "/carts", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        listener.onSuccess(response); // Gửi phản hồi thành công cho người nghe
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        listener.onError(error.getMessage()); // Gửi thông báo lỗi cho người nghe
+                    }
+                });
+
+        // Thêm yêu cầu vào hàng đợi của RequestQueue
+        requestQueue.add(jsonObjectRequest);
+    }
+
 }
